@@ -32,6 +32,8 @@
     <ProjectItem OpenInEditor="false" SubType="" TargetFileName="$fileinputname$.Context.Interface.tt" ReplaceParameters="true">CSharpTestableDbContext.Context.Interface.tt</ProjectItem>
     <ProjectItem OpenInEditor="false" SubType="" TargetFileName="$fileinputname$.Context.tt" ReplaceParameters="true">CSharpTestableDbContext.Context.tt</ProjectItem>
     <ProjectItem OpenInEditor="false" SubType="" TargetFileName="$fileinputname$.tt" ReplaceParameters="true">CSharpTestableDbContext.Types.tt</ProjectItem>
+    <ProjectItem OpenInEditor="false" SubType="" TargetFileName="Extensions\$fileinputname$.Extensions.Interfaces.tt" ReplaceParameters="true">CSharpTestableDbContext.Extensions.Interfaces.tt</ProjectItem>
+    <ProjectItem OpenInEditor="false" SubType="" TargetFileName="Extensions\$fileinputname$.Extensions.tt" ReplaceParameters="true">CSharpTestableDbContext.Extensions.tt</ProjectItem>
   </TemplateContent>
 
   <WizardExtension>

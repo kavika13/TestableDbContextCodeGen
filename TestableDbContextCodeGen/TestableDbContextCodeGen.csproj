@@ -54,13 +54,17 @@
     </Content>
     <None Include="ItemTemplates\CSharpTestableDbContext.Context.Interface.tt" />
     <None Include="ItemTemplates\CSharpTestableDbContext.Context.tt" />
+    <None Include="ItemTemplates\CSharpTestableDbContext.Extensions.Interfaces.tt" />
+    <None Include="ItemTemplates\CSharpTestableDbContext.Extensions.tt" />
     <None Include="ItemTemplates\CSharpTestableDbContext.Types.tt" />
     <None Include="source.extension.vsixmanifest">
       <SubType>Designer</SubType>
     </None>
   </ItemGroup>
   <ItemGroup>
-    <Content Include="ItemTemplates\ADONETArtifactGenerator_TestableDbContextCSharp.vstemplate" />
+    <Content Include="ItemTemplates\ADONETArtifactGenerator_TestableDbContextCSharp.vstemplate">
+      <SubType>Designer</SubType>
+    </Content>
   </ItemGroup>
   <ItemGroup>
     <Service Include="{508349B6-6B84-4DF5-91F0-309BEEBAD82D}" />

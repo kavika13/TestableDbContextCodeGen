@@ -1,0 +1,272 @@
+﻿<#@ template language="C#" debug="false" hostspecific="true"#>
+<#@ include file="EF.Utility.CS.ttinclude"#><#@
+ output extension=".txt"#><#
+
+var loader = new MetadataLoader(this);
+var inputFile = @"..\$edmxInputFile$";
+var ItemCollection = loader.CreateEdmItemCollection(inputFile);
+
+Code = new CodeGenerationTools(this);
+ObjectNamespace = Code.VsNamespaceSuggestion();
+
+EntityContainer container = ItemCollection.GetItems<EntityContainer>().FirstOrDefault();
+if (container == null)
+{
+    return string.Empty;
+}
+
+EntityFrameworkTemplateFileManager fileManager = EntityFrameworkTemplateFileManager.Create(this);
+WriteHeader(fileManager);
+
+fileManager.StartNewFile("DbSetExtensions.cs");
+
+BeginNamespace(ObjectNamespace);
+
+#>
+using System;
+using System.Collections.Generic;
+using System.Data.Entity;
+
+public static class DbSetExtensions
+{
+    private static readonly Func<IDbSetExtensions> DefaultFactory = () => new DefaultImpl();
+    internal static Func<IDbSetExtensions> ExtensionsFactory = DefaultFactory;
+
+    internal static void ResetFactory()
+    {
+        ExtensionsFactory = DefaultFactory;
+    }
+
+    public static IEnumerable<TEntity> SqlQuery<TEntity>(this IDbSet<TEntity> set, string sql, params object[] parameters)
+        where TEntity : class
+    {
+        return ExtensionsFactory()
+            .SqlQuery(set, sql, parameters);
+    }
+
+    class DefaultImpl : IDbSetExtensions
+    {
+        public IEnumerable<TEntity> SqlQuery<TEntity>(IDbSet<TEntity> set, string sql, params object[] parameters)
+            where TEntity : class
+        {
+            var setAsDbSet = set as DbSet<TEntity>;
+            return setAsDbSet != null
+                ? setAsDbSet.SqlQuery(sql, parameters)
+                : (IEnumerable<TEntity>)set;
+        }
+    }
+}
+<#
+
+EndNamespace(ObjectNamespace);
+
+fileManager.StartNewFile("EnumerableExtensions.cs");
+
+BeginNamespace(ObjectNamespace);
+
+#>
+using System;
+using System.Collections.Generic;
+using System.Data.Entity.Infrastructure;
+
+public static class EnumerableExtensions
+{
+    private static readonly Func<IEnumerableExtensions> DefaultFactory = () => new DefaultImpl();
+    internal static Func<IEnumerableExtensions> ExtensionsFactory = DefaultFactory;
+
+    internal static void ResetFactory()
+    {
+        ExtensionsFactory = DefaultFactory;
+    }
+
+    public static IEnumerable<TEntity> AsNoTracking<TEntity>(this IEnumerable<TEntity> sqlQuery)
+        where TEntity : class
+    {
+        return ExtensionsFactory()
+            .AsNoTracking(sqlQuery);
+    }
+
+    class DefaultImpl : IEnumerableExtensions
+    {
+        public IEnumerable<TEntity> AsNoTracking<TEntity>(IEnumerable<TEntity> sqlQuery)
+            where TEntity : class
+        {
+            var sqlQueryAsDbSqlQuery = sqlQuery as DbSqlQuery<TEntity>;
+            return sqlQueryAsDbSqlQuery != null
+                ? sqlQueryAsDbSqlQuery.AsNoTracking()
+                : sqlQuery;
+        }
+    }
+}
+<#
+
+EndNamespace(ObjectNamespace);
+
+fileManager.StartNewFile("OrderedQueryableExtensions.cs");
+
+BeginNamespace(ObjectNamespace);
+
+#>
+using System;
+using System.Data.Entity.Infrastructure;
+using System.Linq;
+
+public static class OrderedQueryableExtensions
+{
+    private static readonly Func<IOrderedQueryableExtensions> DefaultFactory = () => new DefaultImpl();
+    internal static Func<IOrderedQueryableExtensions> ExtensionsFactory = DefaultFactory;
+
+    internal static void ResetFactory()
+    {
+        ExtensionsFactory = DefaultFactory;
+    }
+
+    public static IOrderedQueryable<TEntity> AsNoTracking<TEntity>(this IOrderedQueryable<TEntity> query)
+    {
+        return ExtensionsFactory()
+            .AsNoTracking(query);
+    }
+
+    public static IOrderedQueryable<TEntity> Include<TEntity>(this IOrderedQueryable<TEntity> query, string path)
+    {
+        return ExtensionsFactory()
+            .Include(query, path);
+    }
+
+    class DefaultImpl : IOrderedQueryableExtensions
+    {
+        public IOrderedQueryable<TEntity> AsNoTracking<TEntity>(IOrderedQueryable<TEntity> query)
+        {
+            var queryAsDbQuery = query as DbQuery<TEntity>;
+            return queryAsDbQuery != null
+                ? queryAsDbQuery.AsNoTracking()
+                : query;
+        }
+
+        public IOrderedQueryable<TEntity> Include<TEntity>(IOrderedQueryable<TEntity> query, string path)
+        {
+            var queryAsDbQuery = query as DbQuery<TEntity>;
+            return queryAsDbQuery != null
+                ? queryAsDbQuery.Include(path)
+                : query;
+        }
+    }
+}
+<#
+
+EndNamespace(ObjectNamespace);
+
+fileManager.StartNewFile("QueryableExtensions.cs");
+
+BeginNamespace(ObjectNamespace);
+
+#>
+using System;
+using System.Data.Entity.Infrastructure;
+using System.Linq;
+
+public static class QueryableExtensions
+{
+    private static readonly Func<IQueryableExtensions> DefaultFactory = () => new DefaultImpl();
+    internal static Func<IQueryableExtensions> ExtensionsFactory = DefaultFactory;
+
+    internal static void ResetFactory()
+    {
+        ExtensionsFactory = DefaultFactory;
+    }
+
+    public static IQueryable<TEntity> AsNoTracking<TEntity>(this IQueryable<TEntity> query)
+    {
+        return ExtensionsFactory()
+            .AsNoTracking(query);
+    }
+
+    public static IQueryable<TEntity> Include<TEntity>(this IQueryable<TEntity> query, string path)
+    {
+        return ExtensionsFactory()
+            .Include(query, path);
+    }
+
+    class DefaultImpl : IQueryableExtensions
+    {
+        public IQueryable<TEntity> AsNoTracking<TEntity>(IQueryable<TEntity> query)
+        {
+            var queryAsDbQuery = query as DbQuery<TEntity>;
+            return queryAsDbQuery != null
+                ? queryAsDbQuery.AsNoTracking()
+                : query;
+        }
+
+        public IQueryable<TEntity> Include<TEntity>(IQueryable<TEntity> query, string path)
+        {
+            var queryAsDbQuery = query as DbQuery<TEntity>;
+            return queryAsDbQuery != null
+                ? queryAsDbQuery.Include(path)
+                : query;
+        }
+    }
+}
+<#
+
+EndNamespace(ObjectNamespace);
+
+fileManager.Process();
+
+#>
+<#+
+string ObjectNamespace { get; set; }
+CodeGenerationTools Code { get; set; }
+
+string GetResourceString(string resourceName)
+{
+	if(_resourceManager == null)
+	{
+		_resourceManager = new System.Resources.ResourceManager("System.Data.Entity.Design", typeof(System.Data.Entity.Design.MetadataItemCollectionFactory).Assembly);
+	}
+	
+    return _resourceManager.GetString(resourceName, null);
+}
+System.Resources.ResourceManager _resourceManager;
+
+void WriteHeader(EntityFrameworkTemplateFileManager fileManager)
+{
+    fileManager.StartHeader();
+#>
+//------------------------------------------------------------------------------
+// <auto-generated>
+// <#=GetResourceString("Template_GeneratedCodeCommentLine1")#>
+//
+// <#=GetResourceString("Template_GeneratedCodeCommentLine2")#>
+// <#=GetResourceString("Template_GeneratedCodeCommentLine3")#>
+// </auto-generated>
+//------------------------------------------------------------------------------
+
+<#+
+    fileManager.EndBlock();
+}
+
+void BeginNamespace(string namespaceName)
+{
+    CodeRegion region = new CodeRegion(this);
+    if (!String.IsNullOrEmpty(namespaceName))
+    {
+#>
+namespace <#=Code.EscapeNamespace(namespaceName)#>
+{
+<#+
+        PushIndent(CodeRegion.GetIndent(1));
+    }
+}
+
+void EndNamespace(string namespaceName)
+{
+    if (!String.IsNullOrEmpty(namespaceName))
+    {
+        PopIndent();
+#>
+}
+<#+
+    }
+}
+
+#>
