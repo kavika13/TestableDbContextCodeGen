@@ -1,8 +1,10 @@
 Visual Studio 2010 Extension for creating Entity Framework 4.1 (or greater) Entity model code generators.
 
-Use the generators just like you would the existing [`DbContext`](http://msdn.microsoft.com/en-us/library/system.data.entity.dbcontext(v=VS.103).aspx) code generators.  Simply right click on your Edmx model and click `Add Code Generation Item...`
+To install the extension, simply grab the latest release [from the Downloads Page](https://github.com/kavika13/TestableDbContextCodeGen/downloads), extract the Zip file, and run the extension installer.
 
-The code that gets created has a `DbContext` that is derived from a mockable interface ([Unit of Work Pattern](http://martinfowler.com/eaaCatalog/unitOfWork.html)), which exposes the Entity [Repositories](http://martinfowler.com/eaaCatalog/repository.html) as [`IDbSet<TEntity>`](http://msdn.microsoft.com/en-us/library/gg679233(v=VS.103).aspx).
+Use the generators just like you would the existing [`DbContext`](http://msdn.microsoft.com/en-us/library/system.data.entity.dbcontext\(v=VS.103\).aspx) code generators.  Simply right click on your Edmx model and click `Add Code Generation Item...`
+
+The code that gets created has a `DbContext` that is derived from a mockable interface ([Unit of Work Pattern](http://martinfowler.com/eaaCatalog/unitOfWork.html)), which exposes the Entity [Repositories](http://martinfowler.com/eaaCatalog/repository.html) as [`IDbSet<TEntity>`](http://msdn.microsoft.com/en-us/library/gg679233\(v=VS.103\).aspx).
 
 Pretty simple.
 
